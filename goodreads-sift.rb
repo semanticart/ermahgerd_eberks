@@ -8,39 +8,38 @@
 
 require 'csv'
 
-books_in_library = {}
-
-CSV.foreach("titles.csv") do |row|
-  key = [row[0], row[1]]
-  books_in_library[key] = row
+def titles_match(library_title, goodreads_title)
+  library_title.include?(goodreads_title) ||
+    goodreads_title.include?(library_title)
 end
 
-books = []
-File.open(ARGV[0]).readlines.each do |line|
+def authors_match(library_author, goodreads_author)
+  library_author.include?(goodreads_author) ||
+    goodreads_author.include?(library_author)
+end
+
+matching_books = []
+
+goodreads_books = File.open(ARGV[0]).readlines.map do |line|
   if line.match(Regexp.new(ARGV[1] || ""))
     # goodreads dumps out csv that ruby can't parse... e.g., ...,="0449912558",="9780449912553"...,
     line.gsub!('="', '"')
 
-    row = CSV.parse_line(line)
+    CSV.parse_line(line.downcase)
+  end
+end.compact
 
-    author = row[2]
-    title = row[1]
-
-    # goodreads likes to specify which trilogy/etc a books is part of.
-    # e.g. The Sparrow (The Sparrow, #1)
-    title_without_parenthetical = title.sub(/\s+\(.*?\)$/, '')
-
-    match = books_in_library[[title, author]] || books_in_library[[title_without_parenthetical, author]]
-
-    unless match.nil?
-      books << match
-      p match
+CSV.read("titles.csv").each do |library_book|
+  goodreads_books.each do |goodreads_book|
+    if authors_match(library_book[1].downcase, goodreads_book[2]) && titles_match(library_book[0].downcase, goodreads_book[1])
+      p library_book
+      matching_books << library_book
     end
   end
 end
 
 if ARGV.include? '--open'
-  books.each do |book|
+  matching_books.each do |book|
     `open #{book[2]}`
   end
 end

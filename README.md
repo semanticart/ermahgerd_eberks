@@ -17,10 +17,18 @@ goodreads-sift.rb
 
 compare the titles.csv file against your goodreads csv export list to see what's available.
 
+you can get your goodreads export file here: http://www.goodreads.com/review/import
+
 you probably want to compare against your to-read shelf
 
 `ruby goodreads-sift.rb goodreads_export.csv to-read`
 
-Note: this is rather naive, matching on author and title. I've made it slightly more robust by trying titles without the series name, but I'm sure it will still miss matches a human could find.
-
 You can pass `--open` as the last argument to have the script open all the results' reserve pages in your browser.
+
+Note: We're using case-insensitive substring matching for titles and authors. This obviously isn't bullet-proof but should find a lot of matches where goodreads includes a subtitle (or series) and the library does not. Improvements to matching are welcome.
+
+
+TODO
+============
+
+* handle audiobooks separately in both the scrape and the sift.
