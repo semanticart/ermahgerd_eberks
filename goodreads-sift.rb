@@ -32,14 +32,16 @@ end.compact
 CSV.read("titles.csv").each do |library_book|
   goodreads_books.each do |goodreads_book|
     if authors_match(library_book[1].downcase, goodreads_book[2]) && titles_match(library_book[0].downcase, goodreads_book[1])
-      p library_book
       matching_books << library_book
     end
   end
 end
 
-if ARGV.include? '--open'
-  matching_books.each do |book|
+
+matching_books.sort.each do |book|
+  if ARGV.include? '--open'
     `open #{book[2]}`
   end
+
+  p book
 end
