@@ -22,3 +22,5 @@ you probably want to compare against your to-read shelf
 `ruby goodreads-sift.rb goodreads_export.csv to-read`
 
 Note: this is rather naive, matching on author and title. I've made it slightly more robust by trying titles without the series name, but I'm sure it will still miss matches a human could find.
+
+You can pass `--open` as the last argument to have the script open all the results' reserve pages in your browser.

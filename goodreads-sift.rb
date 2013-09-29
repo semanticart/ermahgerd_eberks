@@ -15,6 +15,7 @@ CSV.foreach("titles.csv") do |row|
   books_in_library[key] = row
 end
 
+books = []
 File.open(ARGV[0]).readlines.each do |line|
   if line.match(Regexp.new(ARGV[1] || ""))
     # goodreads dumps out csv that ruby can't parse... e.g., ...,="0449912558",="9780449912553"...,
@@ -31,6 +32,15 @@ File.open(ARGV[0]).readlines.each do |line|
 
     match = books_in_library[[title, author]] || books_in_library[[title_without_parenthetical, author]]
 
-    p match unless match.nil?
+    unless match.nil?
+      books << match
+      p match
+    end
+  end
+end
+
+if ARGV.include? '--open'
+  books.each do |book|
+    `open #{book[2]}`
   end
 end
